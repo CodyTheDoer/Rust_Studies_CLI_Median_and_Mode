@@ -2,11 +2,42 @@ use std::io;
 
 fn main() {
     let user_entry = inital_user_selection_data_type();
-    println!("{user_entry}");
-    main_again();
+    let mut storage_vec = Vec::new();
+
+    if user_entry == "M" {
+        manual_entry(&mut storage_vec);            
+    } else if user_entry == "F" {
+        println!("F");
+    } else {
+        println!("{user_entry}");
+    }
+
+    println!("Vector Review:");
+    for i in storage_vec.iter() { 
+        println!("{}", i); 
+    }
+
+    // main_again();
 }
 
-// fn manual_entry() {}
+fn manual_entry(v: &mut Vec<String>) {
+    println!("Please enter integer:");
+
+    let mut user_entry = String::new();
+    let mut clean_float = Vec::new();
+
+    io::stdin()
+        .read_line(&mut user_entry)
+        .expect("Failed to read line");
+
+    for char in user_entry.chars(){
+        if char.is_ascii_digit() || char == '.'{
+            clean_float.push(char as u8)
+        }
+    }
+
+    v.push(String::from_utf8(clean_float).expect("Our bytes should be valid utf8"));
+}
 
 // fn file_selection() {}
 
