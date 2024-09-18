@@ -1,4 +1,5 @@
 use std::io;
+use std::collections::HashMap;
 
 fn main() {
     println!("Welcome to the Mean and Median Idenitifier!");
@@ -6,26 +7,49 @@ fn main() {
     let mut storage_vec = Vec::new();
     manual_entry(&mut storage_vec);
 
-    println!("Data Review:");
+    println!("Data Review: Presort");
     for i in storage_vec.iter() { 
         println!("{}", i); 
     }
+    
+    // convert stored vectors to floats
+    let mut float_vec: Vec<f64> = storage_vec
+        .iter()
+        .map(|s| s.parse::<f64>().expect("Failed to parse string to integer"))
+        .collect();
 
-    parse_median(&storage_vec);
-    parse_mode(&storage_vec);
+    // sort the floats
+    float_vec.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+    parse_median(&mut float_vec);
+    parse_mode(&mut float_vec);
 
     main_again();
 }
 
-fn parse_median(v: &Vec<String>) {
-    for i in v.iter() { 
-        println!("Median {}", i); 
+fn parse_median(v: &mut Vec<f64>) {
+    if v.len() % 2 == 0 { // Even Number
+        let median_index_lower = (v.len() / 2) - 1;
+        let median_index_upper = v.len() / 2;
+        let median_value_lower = &v[median_index_lower];
+        let median_value_upper = &v[median_index_upper];
+        let median_value = (median_value_lower + median_value_upper) / 2.0;
+        println!("Median: {median_value}");
+    } else { // Odd Number
+        let median_index = v.len() / 2;
+        let median_value = &v[median_index];
+        println!("Median: {median_value}");
     }
 }
-fn parse_mode(v: &Vec<String>) {
+fn parse_mode(v: &mut Vec<f64>) {
+    let mut map = HashMap::new();
     for i in v.iter() { 
-        println!("Mode {}", i); 
+        let count = map.entry(i.to_string()).or_insert(0);
+        *count += 1;
     }
+    println!("{map:?}");
+    map.sort();
+    println!("{map:?}");
 }
 
 fn manual_entry(v: &mut Vec<String>) {
