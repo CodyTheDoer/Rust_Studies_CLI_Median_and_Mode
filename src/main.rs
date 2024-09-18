@@ -1,5 +1,5 @@
 use std::io;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 fn main() {
     println!("Welcome to the Mean and Median Idenitifier!");
@@ -41,15 +41,16 @@ fn parse_median(v: &mut Vec<f64>) {
         println!("Median: {median_value}");
     }
 }
+
 fn parse_mode(v: &mut Vec<f64>) {
-    let mut map = HashMap::new();
+    let mut map = BTreeMap::new();
     for i in v.iter() { 
         let count = map.entry(i.to_string()).or_insert(0);
         *count += 1;
     }
     println!("{map:?}");
-    map.sort();
-    println!("{map:?}");
+    // Figure out how to sort by the key value in the mapped data.
+    // Goodnight captain, sleep and morale is important <3
 }
 
 fn manual_entry(v: &mut Vec<String>) {
