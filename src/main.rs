@@ -58,25 +58,45 @@ fn parse_mode(v: &mut Vec<f64>) {
     }
 
     // Sort the data by most common occurance
-    vec.sort_by(|a, b| a.cmp(b));
+    vec.sort_by(|a, b| b.cmp(a));
+
+    println!("Data Review: Postsort");
     println!("{:?}", vec);
+    println!("{:?}", vec[0].split(": "));
 
     let vec_key_zero = parse_sorted_vec_key(vec[0].clone());
     let vec_key_one = parse_sorted_vec_key(vec[1].clone());
 
     let vec_value_zero = parse_sorted_vec_value(vec[0].clone());
-    let vec_value_one = parse_sorted_vec_value(vec[1].clone());
     
-    println!("{:?}", vec_key_zero);
-    println!("{:?}", vec_key_one);
-    println!("{:?}", vec_value_zero);
-    println!("{:?}", vec_value_one);
-
     if vec_key_zero == vec_key_one {
-        // maths
+        println!("Multi-Modal Dataset Detected:");
+        // If matching key values figure out how many, return that info as index_comp_count  
+        let mut match_bool = true;
+        let mut index_comp_count: u8 = 0;
+        let vec_length = vec.len();
+        let adj_vec_length = vec.len() - 1;
+        while match_bool == true {
+            for i in 0..adj_vec_length {
+                let temp_zero = parse_sorted_vec_key(vec[i].clone());
+                let temp_one = parse_sorted_vec_key(vec[i + 1].clone());
+                if temp_zero != temp_one {
+                    match_bool = false;
+                }
+                index_comp_count += 1;
+                if usize::from(index_comp_count) == vec_length {
+                    match_bool = false;                    
+                }
+            }
+        }        
+        // return n "Mode: Value" for each matching mode value
+        for i in 0..index_comp_count {
+            let temp_mode = parse_sorted_vec_value(vec[i as usize].clone());
+            println!("Mode: {:?}", temp_mode)
+        }
     }
     else {
-        println!("Mode: {:?}", vec_value_zero)
+        println!("Mode: {:?}", vec_value_zero);
     }
 }
 
