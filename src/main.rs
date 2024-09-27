@@ -1,5 +1,5 @@
 use std::io;
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 fn main() {
     println!("Welcome to the Mean and Median Idenitifier!");
@@ -43,14 +43,69 @@ fn parse_median(v: &mut Vec<f64>) {
 }
 
 fn parse_mode(v: &mut Vec<f64>) {
-    let mut map = BTreeMap::new();
+    let mut map = HashMap::new();
+
+    // Map values
     for i in v.iter() { 
         let count = map.entry(i.to_string()).or_insert(0);
         *count += 1;
     }
-    println!("{map:?}");
-    // Figure out how to sort by the key value in the mapped data.
-    // Goodnight captain, sleep and morale is important <3
+
+    // convert extract mapped values to vector for sorting data
+    let mut vec: Vec<_> = Vec::new();
+    for (key, value) in map.iter() {
+        vec.push(format!("{key}: {value}"));
+    }
+
+    // Sort the data by most common occurance
+    vec.sort_by(|a, b| a.cmp(b));
+    println!("{:?}", vec);
+
+    let vec_key_zero = parse_sorted_vec_key(vec[0].clone());
+    let vec_key_one = parse_sorted_vec_key(vec[1].clone());
+
+    let vec_value_zero = parse_sorted_vec_value(vec[0].clone());
+    let vec_value_one = parse_sorted_vec_value(vec[1].clone());
+    
+    println!("{:?}", vec_key_zero);
+    println!("{:?}", vec_key_one);
+    println!("{:?}", vec_value_zero);
+    println!("{:?}", vec_value_one);
+
+    if vec_key_zero == vec_key_one {
+        // maths
+    }
+    else {
+        println!("Mode: {:?}", vec_value_zero)
+    }
+}
+
+fn parse_sorted_vec_key(s: String) -> String {
+    let mut post_whitespace = false;
+    let mut vec_count = String::new();
+    for char in s.chars() {
+        if post_whitespace == true {
+            vec_count.push(char);
+        }
+        if char.is_whitespace() {
+            post_whitespace = true;
+        }
+    }
+    return vec_count;
+}
+
+fn parse_sorted_vec_value(s: String) -> String {
+    let mut post_whitespace = false;
+    let mut vec_value = String::new();
+    for char in s.chars() {
+        if post_whitespace == false && (char.is_ascii_digit() || char == '.' ) {
+            vec_value.push(char);            
+        }
+        if char.is_whitespace() {
+            post_whitespace = true;
+        }
+    }
+    return vec_value;
 }
 
 fn manual_entry(v: &mut Vec<String>) {
