@@ -51,85 +51,34 @@ fn parse_mode(v: &mut Vec<f64>) {
         *count += 1;
     }
 
-    // convert extract mapped values to vector for sorting data
-    let mut vec: Vec<_> = Vec::new();
+    let mut outer_vec: Vec<Vec<String>> = Vec::new();
     for (key, value) in map.iter() {
-        vec.push(format!("{key}: {value}"));
+        let mut temp_vec: Vec<_> = Vec::new();
+        temp_vec.push(format!("{key}: {value}"));
+        let inner_vec = split_colon_space_return_two_part_vec(temp_vec[0].clone());
+        outer_vec.push(inner_vec);
     }
 
     // Sort the data by most common occurance
-    vec.sort_by(|a, b| b.cmp(a));
+    outer_vec.sort_by(|a, b| b[1].cmp(&a[1]));
 
     println!("Data Review: Postsort");
-    println!("{:?}", vec);
-    println!("{:?}", vec[0].split(": "));
+    println!("{:?}", outer_vec);
 
-    let vec_key_zero = parse_sorted_vec_key(vec[0].clone());
-    let vec_key_one = parse_sorted_vec_key(vec[1].clone());
-
-    let vec_value_zero = parse_sorted_vec_value(vec[0].clone());
-    
-    if vec_key_zero == vec_key_one {
-        println!("Multi-Modal Dataset Detected:");
-        // If matching key values figure out how many, return that info as index_comp_count  
-        let mut match_bool = true;
-        let mut index_comp_count: u8 = 0;
-        let vec_length = vec.len();
-        let adj_vec_length = vec.len() - 1;
-        while match_bool == true {
-            for i in 0..adj_vec_length {
-                let temp_zero = parse_sorted_vec_key(vec[i].clone());
-                let temp_one = parse_sorted_vec_key(vec[i + 1].clone());
-                if temp_zero != temp_one {
-                    match_bool = false;
-                }
-                index_comp_count += 1;
-                if usize::from(index_comp_count) == vec_length {
-                    match_bool = false;                    
-                }
-            }
-        }        
-        // return n "Mode: Value" for each matching mode value
-        for i in 0..index_comp_count {
-            let temp_mode = parse_sorted_vec_value(vec[i as usize].clone());
-            println!("Mode: {:?}", temp_mode)
-        }
-    }
-    else {
-        println!("Mode: {:?}", vec_value_zero);
+    if outer_vec[0][1] == outer_vec[1][1] {
+        println!("Multi-Modal Dataset:");
     }
 }
 
-fn parse_sorted_vec_key(s: String) -> String {
-    let mut post_whitespace = false;
-    let mut vec_count = String::new();
-    for char in s.chars() {
-        if post_whitespace == true {
-            vec_count.push(char);
-        }
-        if char.is_whitespace() {
-            post_whitespace = true;
-        }
-    }
-    return vec_count;
-}
-
-fn parse_sorted_vec_value(s: String) -> String {
-    let mut post_whitespace = false;
-    let mut vec_value = String::new();
-    for char in s.chars() {
-        if post_whitespace == false && (char.is_ascii_digit() || char == '.' ) {
-            vec_value.push(char);            
-        }
-        if char.is_whitespace() {
-            post_whitespace = true;
-        }
-    }
-    return vec_value;
+fn split_colon_space_return_two_part_vec(s: String) -> Vec<String> {
+    let parts: Vec<String> = s
+        .split(": ")
+        .map(|part| part.to_string())
+        .collect();
+    parts
 }
 
 fn manual_entry(v: &mut Vec<String>) {
-
     let mut loop_check = true;
 
     while loop_check {
