@@ -67,24 +67,22 @@ fn parse_mode(v: &mut Vec<f64>) {
 
     if outer_vec[0][1] == outer_vec[1][1] {
         println!("Multi-Modal Dataset:");
-        let mut match_bool = true;
-        let mut matching_mode_occurance_counter: u8 = 0;
+
+        let mut matching_mode_occurance_counter: u8 = 1;
         let vec_total_count = outer_vec.len();
-        let vec_adj_count = outer_vec.len() - 1;
-        while match_bool == true {
-            for i in 0..vec_adj_count {
-                if outer_vec[i][1] != outer_vec[i+1][1] {
-                    match_bool = false;
-                }
-                if usize::from(matching_mode_occurance_counter) == vec_total_count {
-                    match_bool = false;
-                }
+
+        for i in 1..vec_total_count {
+            if outer_vec[i][1] == outer_vec[i-1][1] {
                 matching_mode_occurance_counter += 1;
+            } else {
+                break;
             }
         }
+
         for i in 0..matching_mode_occurance_counter {
             println!("Mode: {:?}", outer_vec[i as usize]);
         }
+
     } else {
         println!("Mode: {:?}", outer_vec[0]);
     }
